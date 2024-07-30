@@ -1,6 +1,9 @@
 ﻿using System;
 
-public class cardHolder
+using System;
+using System.Collections.Generic;
+
+public class CardHolder
 {
     string cardId;
     int pin;
@@ -8,8 +11,8 @@ public class cardHolder
     string lastName;
     double balance;
 
-    //Initialize constructor and take all the variables created and pass all the them as parameters to the function and instantiate them as new objects
-    public cardHolder(string cardId, int pin, string firstName, string lastName, double balance)
+    // Constructor to initialize the card holder details
+    public CardHolder(string cardId, int pin, string firstName, string lastName, double balance)
     {
         this.cardId = cardId;
         this.pin = pin;
@@ -18,82 +21,142 @@ public class cardHolder
         this.balance = balance;
     }
 
-    //define get method
-    public string getCardId()
-    {
-        return cardId;
-    }
+    // Get methods to retrieve private attributes
+    public string GetCardId() => cardId;
+    public int GetPin() => pin;
+    public string GetFirstName() => firstName;
+    public string GetLastName() => lastName;
+    public double GetBalance() => balance;
 
-    public int getPin()
-    {
-        return pin;
-    }
-    public string getFirstName()
-    {
-        return firstName;
-    }
-    public string getLastName()
-    {
-        return lastName;
-    }
-    public double getBalance()
-    {
-        return balance;
-    }
+    // Set methods to update private attributes
+    public void SetCardId(string newCardId) => cardId = newCardId;
+    public void SetPin(int newPin) => pin = newPin;
+    public void SetFirstName(string newFirstName) => firstName = newFirstName;
+    public void SetLastName(string newLastName) => lastName = newLastName;
+    public void SetBalance(double newBalance) => balance = newBalance;
 
-    //define set functions
-
-    public void setCardId(string newCardId)
-    {
-        cardId = newCardId;
-    }
-    public void setPin(int newPin)
-    {
-        pin = newPin;
-    }
-    public void setFirstName(string newFirstName)
-    {
-        firstName = newFirstName;
-    }
-    public void setLastName(string newLastName)
-    {
-        lastName = newLastName;
-    }
-
+    // Main method to run the ATM program
     public static void Main(string[] args)
     {
-        void printOptionss()
+        void PrintOptions()
         {
-            Console.WriteLine("Please choose from one the options: \n 1. Deposit \n 2. Withdraw \n 3. Show Balance \n 4. Exit ");
-
+            Console.WriteLine("Please choose from one of the options:");
+            Console.WriteLine("1. Deposit");
+            Console.WriteLine("2. Withdraw");
+            Console.WriteLine("3. Show Balance");
+            Console.WriteLine("4. Update username");
+            Console.WriteLine("5. Exit");
         }
 
-        //handle deposit and pass in the user
-        void deposit(cardHolder currentUser)
+        // Method to handle deposit
+        void Deposit(CardHolder currentUser)
         {
-            Console.WriteLine("How much would you like to deposit");
+            Console.WriteLine("How much would you like to deposit?");
             double deposit = Double.Parse(Console.ReadLine());
-            currentUser.balance += deposit;
-            Console.WriteLine("Thank you for using out Atm, your new balance is: " + currentUser.getBalance());
-
+            currentUser.SetBalance(currentUser.GetBalance() + deposit);
+            Console.WriteLine("Thank you for your deposit. Your new balance is: " + currentUser.GetBalance());
         }
-        void withdraw(cardHolder currentUser)
-        {
-            Console.WriteLine("How much would you like to withdraw.?");
-            double withdraw = Double.Parse(Console.ReadLine());
-            //check if the user have enought money
 
-            if (currentUser.getBalance() < withdraw)
+        // Method to handle withdrawal
+        void Withdraw(CardHolder currentUser)
+        {
+            Console.WriteLine("How much would you like to withdraw?");
+            double withdraw = Double.Parse(Console.ReadLine());
+
+            // Check if the user has enough funds
+            if (currentUser.GetBalance() < withdraw)
             {
                 Console.WriteLine("Insufficient funds :(");
-            } else
-            {
-                currentUser.balance = withdraw;
             }
+            else
+            {
+                currentUser.SetBalance(currentUser.GetBalance() - withdraw);
+                Console.WriteLine("Withdrawal successful. Your new balance is: " + currentUser.GetBalance());
+            }
+        }
 
+        // Method to check balance
+        void ShowBalance(CardHolder currentUser)
+        {
+            Console.WriteLine("Your current balance is: " + currentUser.GetBalance());
+        }
+        
+
+        // Sample data for testing
+        List<CardHolder> cardHolders = new List<CardHolder>
+        {
+            new CardHolder("1234567890", 1234, "John", "Doe", 500.00),
+            new CardHolder("0987654321", 4321, "Jane", "Smith", 1500.00)
+        };
+
+        // Simulate the ATM functionality
+        Console.WriteLine("Welcome to the ATM");
+       
+        CardHolder currentUser = null;
+
+        while (currentUser == null)
+        {
+            Console.WriteLine("Enter your Card ID: ");
+            string cardId = Console.ReadLine();
+            //search card id from cardHolders list
+            currentUser = cardHolders.Find(currentUser => currentUser.GetCardId() == cardId); 
+            
+            if (currentUser == null)
+            {
+                Console.WriteLine("Card not recognised, Please try again.");
+
+            }
+            else
+            {
+                bool aunthenticate = false;
+
+                while (!aunthenticate) // continue looping until the user is authenticated 
+                {
+                    //propmt for pin and authenticate
+                    Console.WriteLine("Enter your pin: ");
+                    int pin = int.Parse(Console.ReadLine());
+
+                   
+
+                    if (currentUser.GetPin() == pin)
+                    {
+                        aunthenticate = true; //can handle atm options
+
+                        //display welcome message
+                        Console.WriteLine($"Welcome {currentUser.GetFirstName()} {currentUser.GetLastName()}!");
+                        
+                        int options = 0;
+
+                        while(options != 4)
+                        {
+                            
+                            PrintOptions();
+                            options = int.Parse(Console.ReadLine());
+
+                            switch (options)
+                            {
+                                case 1: Deposit(currentUser);
+                                    break;
+                                case 2: Withdraw(currentUser);
+                                    break;
+                                case 3: ShowBalance(currentUser);
+                                    break;
+                                case 4: Console.WriteLine("Thank you for using our ATM. Goodbye :)");
+                                    //to go back to login enter id and pin
+                                    currentUser = null;
+                                    break;
+                                default: Console.WriteLine("Invalid Option. Please try again.");
+                                    break;
+                            }      
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid Pin. Please try again.");
+                    }
+                }
+            }
         }
     }
-
-
 }
 
