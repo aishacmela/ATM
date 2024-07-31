@@ -44,8 +44,7 @@ public class CardHolder
             Console.WriteLine("1. Deposit");
             Console.WriteLine("2. Withdraw");
             Console.WriteLine("3. Show Balance");
-            Console.WriteLine("4. Update username");
-            Console.WriteLine("5. Exit");
+            Console.WriteLine("4. Exit");
         }
 
         // Method to handle deposit
@@ -104,7 +103,6 @@ public class CardHolder
             if (currentUser == null)
             {
                 Console.WriteLine("Card not recognised, Please try again.");
-
             }
             else
             {
